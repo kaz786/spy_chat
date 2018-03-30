@@ -2,16 +2,61 @@
 from spy_details import spy_name,spy_age,spy_rating #importing a file with specific variables
 print 'Hello' #greetings given to the user
 print 'Let\'s get started' #initialising
+STATUS_MESSAGE=['At Movie', 'Available', 'Do not disturb']#list
+friends_name=['Kaz']
+friends_age=[26]
+friends_rating=[4.5]
+friends_is_online=[True]
+
+
+def add_status(c_status):
+    if c_status != None:
+        print "Your current status is "+ c_status
+    else:
+        print"You don't have any status currently.."
+    existing_status=raw_input("You want to select from old status? Y/N")
+    if existing_status.upper()=='N':
+        new_status=raw_input('Enter your status : ')
+        if len(new_status)>0:
+            STATUS_MESSAGE.append(new_status)#adding new status to list..
+    elif existing_status.upper()=='Y':
+        serial_no=1
+        for old_status in STATUS_MESSAGE:
+            print str(serial_no)+old_status
+            serial_no=serial_no+1
+        user_choice=input('Enter your choice :')
+        new_status=STATUS_MESSAGE[user_choice-1]
+        updated_status=new_status
+        return updated_status
+
+
+def add_friend():
+    frnd_name=raw_input('What is your name ? ')
+    frnd_age=input('What is your age ? ')
+    frnd_rating=input('What is your rating ? ')
+    if len(frnd_name)>2 and 12<frnd_age<50 and frnd_rating>spy_rating :
+        friends_name.append(frnd_name)
+        friends_age.append(frnd_age)
+        friends_rating.append(frnd_rating)
+        friends_is_online.append(True)
+        return len(friends_name)
+    else:
+        print 'Friend cannot be added..'
+
+
 
 def start_chat(spy_name,spy_age,spy_rating):#user define function created
     print 'Here are your options ' +spy_name#Message given to the user
+    current_status = None
     show_menu = True#by default value true for validation
     while show_menu:#using loop for multiple times show the same thing
         choice = input('What do you want to do ?\n1.Add a status\n2.Add a friend\n0.Exit ')#choices given to the userinput from the user
         if choice ==1:#conditional Statement
-            print 'This will add the status of the spy'#Message for the user
+            updated_status_message = add_status(current_status)
+            print'Updated status is ' + updated_status_message
         elif choice==2:#conditional Statement
-            print 'This will add a friend' #Message for the user
+            no_of_friends = add_friend()
+            print 'You have ' + str(no_of_friends) + ' friends.'
         elif choice==0:#conditional Statement
             show_menu=False#Terminating the program
         else:#conditional Statement
