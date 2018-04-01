@@ -1,67 +1,90 @@
-
+from steganography.steganography import Steganography#importing Steganography module
+from datetime import datetime#importing date time
 from spy_details import spy_name,spy_age,spy_rating #importing a file with specific variables
+time=datetime.now() # current date and time
+print time#Display to the user
 print 'Hello' #greetings given to the user
 print 'Let\'s get started' #initialising
-STATUS_MESSAGE=['At Movie', 'Available', 'Do not disturb']#list
-friends=[{'name':'Ritik','age':21,'rating':4.0,'online':True},{'name':'kaz','age':24,'rating':4.1,'online':True}]
+STATUS_MESSAGE=['At Movie', 'Available', 'Do not disturb']#predefined status
+friends=[{'name':'Ritik','age':21,'rating':4.0,'online':True,'chats':[]},{'name':'kaz','age':24,'rating':4.1,'online':True,'chats':[]}]
 
 
-def add_status(c_status):
-    if c_status != None:
-        print "Your current status is "+ c_status
+def add_status(c_status):#function for statud
+    if c_status != None:#checking condition if status is not none
+        print "Your current status is "+ c_status#Displaying for the user
     else:
-        print"You don't have any status currently.."
-    existing_status = raw_input("You want to select from old status? Y/N")
-    if existing_status.upper() == 'N':
-        new_status=raw_input('Enter your status : ')
-        if len(new_status) > 0:
-            STATUS_MESSAGE.append(new_status)#adding new status to list..
-    elif existing_status.upper()=='Y':
-        serial_no=1
+        print"You don't have any status currently.."#Displaying for the user
+    existing_status = raw_input("You want to select from old status? Y/N")#Asking user to select desired options
+    if existing_status.upper() == 'N':#Checking condition
+        new_status=raw_input('Enter your status : ')#Required user input for the status
+        if len(new_status) > 0:#validating
+            STATUS_MESSAGE.append(new_status)#add the status in the list
+    elif existing_status.upper()=='Y':#checking condition
+        serial_no=1#initialising
         for old_status in STATUS_MESSAGE:#traversing the list
-            print str(serial_no)+'. '+old_status
-            serial_no=serial_no+1
-        user_choice=input('Enter your choice :')
-        new_status=STATUS_MESSAGE[user_choice-1]
-    updated_status=new_status
-    return updated_status
+            print str(serial_no)+'. '+old_status#displaying for the user
+            serial_no=serial_no+1#incrementing
+        user_choice=input('Enter your choice :')#required input for the user
+        new_status=STATUS_MESSAGE[user_choice-1]#Index value decremented not start with zero
+    updated_status=new_status#updating the status
+    return updated_status#returning back
 
 def add_friend():
-    frnd ={
+    frnd ={#defining a list
        'name':'',
         'age': 0,
         'rating':0.0,
-        'online':True
-
+        'online':True,
+        'chats':[]
 
     }
-    frnd['name']=raw_input('What is your name ? ')
-    frnd['age']=input('What is your age ? ')
-    frnd['rating']=input('What is your rating ? ')
-    if len(frnd['name'])>2 and 12<frnd['age']<50 and frnd['rating']>spy_rating and frnd['name'].isalpha():
-        friends.append(frnd)
+    frnd['name']=raw_input('What is your name ? ')#required an input
+    frnd['age']=input('What is your age ? ')#required an input
+    frnd['rating']=input('What is your rating ? ')#required an input
+    if len(frnd['name'])>2 and 12<frnd['age']<50 and frnd['rating']>spy_rating and frnd['name'].isalpha():#checking for the condition
+        friends.append(frnd)#appending in the list
 
     else:
-        print 'Friend cannot be added..'
-    return len(friends)
+        print 'Friend cannot be added..'#displaying for the user
+    return len(friends)#returning the value for the function
 
-def select_frnd():
-    serial_no=1
-    for frnd in friends:
-        print str(serial_no)+". "+frnd['name']
-        serial_no=serial_no+1
-    user_selected_frnd=input("Enter a choice")
-    user_selected_frnd_index=user_selected_frnd-1
-    return user_selected_frnd_index
-
-
-def send_message():
-    select_friend=select_frnd()
+def select_frnd():#display all friend
+    serial_no=1#initialising
+    for frnd in friends:#showing all friends using loop
+        print str(serial_no)+". "+frnd['name']#displaying for the user
+        serial_no=serial_no+1#incrementing
+    user_selected_frnd=input("Enter a choice")#input from the user
+    user_selected_frnd_index=user_selected_frnd-1#decrementing because list does not start with zero
+    return user_selected_frnd_index#returning value to the function
 
 
-def read_message():
-    select_friend=select_frnd()
+def send_message():#sending a message
+    select_friend=select_frnd()#index value
+    original_image = raw_input('What is the name of your image ? ')  # asking the user for an input of image
+    secret_text = raw_input('What is your secret text ? ')  # secret text to be entered
+    output_path = "secret.jpg"#predefined name of an image
+    Steganography.encode(original_image, output_path, secret_text)  # encoding the message with image
+    print 'Your message has been successfully encoded..'#displaying for the user
+    new_chat = {  # dictionary
+        'message': secret_text,
+        'time': datetime.now(),#current date and time
+        'sent_by_me': True
+    }
+    friends[select_friend]['chats'].append(new_chat)  # appending the friend chat detail
+    print'Your secret message is ready.'#displaying for the user
 
+def read_message():#reading a message
+    select_friend=select_frnd()#index value
+    output_path = raw_input('Which image you want to decode ? ')# asking the user for an input of image
+    secret_text = Steganography.decode(output_path)#decoding message
+    print 'Secret text is:' + secret_text#Displaying for the user
+    new_chat = {  # dictionary
+        'message': secret_text,
+        'time': datetime.now(),
+        'sent_by_me': False
+    }
+    friends[select_friend]['chats'].append(new_chat)  # appending the friend chat detail
+    print'Your secret message has been saved...'#Displaying for the user
 
 
 
@@ -70,17 +93,19 @@ def start_chat(spy_name,spy_age,spy_rating):#user define function created
     current_status = None
     show_menu = True#by default value true for validation
     while show_menu:#using loop for multiple times show the same thing
-        choice = input('What do you want to do ?\n1.Add a status\n2.Add a friend\n3.Send a message\n4.Read a message\n0.Exit ')#choices given to the userinput from the user
+        choice = input('What do you want to do ?\n1.Add a status\n2.Add a friend\n3.Send a message\n4.Read a message\n5.Read chats from user\n0.Exit ')#choices given to the userinput from the user
         if choice ==1:#conditional Statement
-            current_status = add_status(current_status)
-            print'Updated status is ' + current_status
+            current_status = add_status(current_status)#calling add  status function
+            print'Updated status is ' + current_status#displaying for the user
         elif choice==2:#conditional Statement
-            no_of_friends = add_friend()
-            print 'You have ' + str(no_of_friends) + ' friends.'
+            no_of_friends = add_friend()#calling the add friend function
+            print 'You have ' + str(no_of_friends) + ' friends.'#displaying for the user
         elif choice == 3:
-            send_message()
+            send_message()#calling send function for encoding
         elif choice == 4:
-            read_message()
+            read_message()#calling read function for decoding
+        elif choice == 5:
+            print 'this module is in progress'#working on this module
         elif choice==0:#conditional Statement
             show_menu=False#Terminating the program
         else:#conditional Statement
