@@ -3,10 +3,7 @@ from spy_details import spy_name,spy_age,spy_rating #importing a file with speci
 print 'Hello' #greetings given to the user
 print 'Let\'s get started' #initialising
 STATUS_MESSAGE=['At Movie', 'Available', 'Do not disturb']#list
-friends_name=['Kaz']
-friends_age=[26]
-friends_rating=[4.5]
-friends_is_online=[True]
+friends=[{'name':'Ritik','age':21,'rating':4.0,'online':True},{'name':'kaz','age':24,'rating':4.1,'online':True}]
 
 
 def add_status(c_status):
@@ -14,34 +11,57 @@ def add_status(c_status):
         print "Your current status is "+ c_status
     else:
         print"You don't have any status currently.."
-    existing_status=raw_input("You want to select from old status? Y/N")
-    if existing_status.upper()=='N':
+    existing_status = raw_input("You want to select from old status? Y/N")
+    if existing_status.upper() == 'N':
         new_status=raw_input('Enter your status : ')
-        if len(new_status)>0:
+        if len(new_status) > 0:
             STATUS_MESSAGE.append(new_status)#adding new status to list..
     elif existing_status.upper()=='Y':
         serial_no=1
-        for old_status in STATUS_MESSAGE:
-            print str(serial_no)+old_status
+        for old_status in STATUS_MESSAGE:#traversing the list
+            print str(serial_no)+'. '+old_status
             serial_no=serial_no+1
         user_choice=input('Enter your choice :')
         new_status=STATUS_MESSAGE[user_choice-1]
-        updated_status=new_status
-        return updated_status
-
+    updated_status=new_status
+    return updated_status
 
 def add_friend():
-    frnd_name=raw_input('What is your name ? ')
-    frnd_age=input('What is your age ? ')
-    frnd_rating=input('What is your rating ? ')
-    if len(frnd_name)>2 and 12<frnd_age<50 and frnd_rating>spy_rating :
-        friends_name.append(frnd_name)
-        friends_age.append(frnd_age)
-        friends_rating.append(frnd_rating)
-        friends_is_online.append(True)
-        return len(friends_name)
+    frnd ={
+       'name':'',
+        'age': 0,
+        'rating':0.0,
+        'online':True
+
+
+    }
+    frnd['name']=raw_input('What is your name ? ')
+    frnd['age']=input('What is your age ? ')
+    frnd['rating']=input('What is your rating ? ')
+    if len(frnd['name'])>2 and 12<frnd['age']<50 and frnd['rating']>spy_rating and frnd['name'].isalpha():
+        friends.append(frnd)
+
     else:
         print 'Friend cannot be added..'
+    return len(friends)
+
+def select_frnd():
+    serial_no=1
+    for frnd in friends:
+        print str(serial_no)+". "+frnd['name']
+        serial_no=serial_no+1
+    user_selected_frnd=input("Enter a choice")
+    user_selected_frnd_index=user_selected_frnd-1
+    return user_selected_frnd_index
+
+
+def send_message():
+    select_friend=select_frnd()
+
+
+def read_message():
+    select_friend=select_frnd()
+
 
 
 
@@ -50,13 +70,17 @@ def start_chat(spy_name,spy_age,spy_rating):#user define function created
     current_status = None
     show_menu = True#by default value true for validation
     while show_menu:#using loop for multiple times show the same thing
-        choice = input('What do you want to do ?\n1.Add a status\n2.Add a friend\n0.Exit ')#choices given to the userinput from the user
+        choice = input('What do you want to do ?\n1.Add a status\n2.Add a friend\n3.Send a message\n4.Read a message\n0.Exit ')#choices given to the userinput from the user
         if choice ==1:#conditional Statement
-            updated_status_message = add_status(current_status)
-            print'Updated status is ' + updated_status_message
+            current_status = add_status(current_status)
+            print'Updated status is ' + current_status
         elif choice==2:#conditional Statement
             no_of_friends = add_friend()
             print 'You have ' + str(no_of_friends) + ' friends.'
+        elif choice == 3:
+            send_message()
+        elif choice == 4:
+            read_message()
         elif choice==0:#conditional Statement
             show_menu=False#Terminating the program
         else:#conditional Statement
