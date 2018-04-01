@@ -1,12 +1,16 @@
 from steganography.steganography import Steganography#importing Steganography module
 from datetime import datetime#importing date time
 from spy_details import spy_name,spy_age,spy_rating #importing a file with specific variables
+
 time=datetime.now() # current date and time
 print time#Display to the user
 print 'Hello' #greetings given to the user
 print 'Let\'s get started' #initialising
 STATUS_MESSAGE=['At Movie', 'Available', 'Do not disturb']#predefined status
 friends=[{'name':'Ritik','age':21,'rating':4.0,'online':True,'chats':[]},{'name':'kaz','age':24,'rating':4.1,'online':True,'chats':[]}]
+
+
+
 
 
 def add_status(c_status):#function for statud
@@ -61,8 +65,9 @@ def select_frnd():#display all friend
 def send_message():#sending a message
     select_friend=select_frnd()#index value
     original_image = raw_input('What is the name of your image ? ')  # asking the user for an input of image
-    secret_text = raw_input('What is your secret text ? ')  # secret text to be entered
+    secret_text = raw_input('What is your secret text ? ')# secret text to be entered
     output_path = "secret.jpg"#predefined name of an image
+    secret_text=str(select_friend)+secret_text#assigning the index with the text fro a reading a message validation
     Steganography.encode(original_image, output_path, secret_text)  # encoding the message with image
     print 'Your message has been successfully encoded..'#displaying for the user
     new_chat = {  # dictionary
@@ -77,14 +82,20 @@ def read_message():#reading a message
     select_friend=select_frnd()#index value
     output_path = raw_input('Which image you want to decode ? ')# asking the user for an input of image
     secret_text = Steganography.decode(output_path)#decoding message
-    print 'Secret text is:' + secret_text#Displaying for the user
-    new_chat = {  # dictionary
-        'message': secret_text,
-        'time': datetime.now(),
-        'sent_by_me': False
-    }
-    friends[select_friend]['chats'].append(new_chat)  # appending the friend chat detail
-    print'Your secret message has been saved...'#Displaying for the user
+    a=int(secret_text[:1])#checking if the right person is decoding the message or not
+    if a==select_friend:
+        secret_text=secret_text.replace(str(a),'')
+        print 'Secret text is:' + secret_text#Displaying for the user
+        new_chat = {  # dictionary
+            'message': secret_text,
+            'time': datetime.now(),
+            'sent_by_me': False
+        }
+        friends[select_friend]['chats'].append(new_chat)  # appending the friend chat detail
+        print'Your secret message has been saved...'#Displaying for the user
+    else:
+
+        print "You are not correct person for decoding this message"#displaying it for the user
 
 
 
