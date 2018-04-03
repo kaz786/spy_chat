@@ -1,13 +1,16 @@
 from steganography.steganography import Steganography#importing Steganography module
 from datetime import datetime#importing date time
-from spy_details import spy_name,spy_age,spy_rating #importing a file with specific variables
+from spy_details import spy ,Spy,ChatMessage #importing a file with specific variables
 
 time=datetime.now() # current date and time
 print time#Display to the user
 print 'Hello' #greetings given to the user
 print 'Let\'s get started' #initialising
 STATUS_MESSAGE=['At Movie', 'Available', 'Do not disturb']#predefined status
-friends=[{'name':'Ritik','age':21,'rating':4.0,'online':True,'chats':[]},{'name':'kaz','age':24,'rating':4.1,'online':True,'chats':[]}]
+frnd1 = Spy('Kazz', 'Mr.', 21, 4.0)  # object of made of the class
+frnd2 = Spy('Rohan', 'Mr.', 25, 4.7)
+friends = [frnd1, frnd2]
+
 
 
 
@@ -34,18 +37,11 @@ def add_status(c_status):#function for statud
     return updated_status#returning back
 
 def add_friend():
-    frnd ={#defining a list
-       'name':'',
-        'age': 0,
-        'rating':0.0,
-        'online':True,
-        'chats':[]
-
-    }
-    frnd['name']=raw_input('What is your name ? ')#required an input
-    frnd['age']=input('What is your age ? ')#required an input
-    frnd['rating']=input('What is your rating ? ')#required an input
-    if len(frnd['name'])>2 and 12<frnd['age']<50 and frnd['rating']>spy_rating and frnd['name'].isalpha():#checking for the condition
+    frnd = Spy('', '', 0, 0.0)
+    frnd.name=raw_input('What is your name ? ')#required an input
+    frnd.age=input('What is your age ? ')#required an input
+    frnd.rating=input('What is your rating ? ')#required an input
+    if len(frnd.name)>2 and 12<frnd.age<50 and frnd.rating>spy.rating and frnd.name.isalpha():#checking for the condition
         friends.append(frnd)#appending in the list
 
     else:
@@ -55,7 +51,7 @@ def add_friend():
 def select_frnd():#display all friend
     serial_no=1#initialising
     for frnd in friends:#showing all friends using loop
-        print str(serial_no)+". "+frnd['name']#displaying for the user
+        print str(serial_no)+". "+frnd.name#displaying for the user
         serial_no=serial_no+1#incrementing
     user_selected_frnd=input("Enter a choice")#input from the user
     user_selected_frnd_index=user_selected_frnd-1#decrementing because list does not start with zero
@@ -70,12 +66,8 @@ def send_message():#sending a message
     secret_text=str(select_friend)+secret_text#assigning the index with the text fro a reading a message validation
     Steganography.encode(original_image, output_path, secret_text)  # encoding the message with image
     print 'Your message has been successfully encoded..'#displaying for the user
-    new_chat = {  # dictionary
-        'message': secret_text,
-        'time': datetime.now(),#current date and time
-        'sent_by_me': True
-    }
-    friends[select_friend]['chats'].append(new_chat)  # appending the friend chat detail
+    new_chat = ChatMessage(secret_text, True)
+    friends[select_friend].chats.append(new_chat)  # appending the friend chat detail
     print'Your secret message is ready.'#displaying for the user
 
 def read_message():#reading a message
@@ -86,12 +78,8 @@ def read_message():#reading a message
     if a==select_friend:
         secret_text=secret_text.replace(str(a),'')
         print 'Secret text is:' + secret_text#Displaying for the user
-        new_chat = {  # dictionary
-            'message': secret_text,
-            'time': datetime.now(),
-            'sent_by_me': False
-        }
-        friends[select_friend]['chats'].append(new_chat)  # appending the friend chat detail
+        new_chat = ChatMessage(secret_text, False)
+        friends[select_friend].chats.append(new_chat)  # appending the friend chat detail
         print'Your secret message has been saved...'#Displaying for the user
     else:
 
@@ -100,7 +88,7 @@ def read_message():#reading a message
 
 
 def start_chat(spy_name,spy_age,spy_rating):#user define function created
-    print 'Here are your options ' +spy_name#Message given to the user
+    print 'Here are your options ' +spy.name#Message given to the user
     current_status = None
     show_menu = True#by default value true for validation
     while show_menu:#using loop for multiple times show the same thing
@@ -124,35 +112,36 @@ def start_chat(spy_name,spy_age,spy_rating):#user define function created
 
 spy_exist=raw_input('Are you an existing spy Y/N ')#asking the user whether he/she is an spy or not
 if spy_exist.upper()=='Y':#conditional Statement
-    print 'Welcome back %s age: %d having spy rating of %d' %(spy_name,spy_age,spy_rating)#Displaying the previous data for the user
-    start_chat(spy_name,spy_age,spy_rating)#Calling  a  chat function
+    print 'Welcome back %s age: %d having spy rating of %d' %(spy.name,spy.age,spy.rating)#Displaying the previous data for the user
+    start_chat(spy.name,spy.age,spy.rating)#Calling  a  chat function
 elif spy_exist.upper()=='N':#conditional Statement
-    spy_name = raw_input('Enter Your Name ')#Message for the user and input from the user
+    spy = Spy("", "", 0, 0.0)
+    spy.name = raw_input('Enter Your Name ')#Message for the user and input from the user
 
-    spy_rating=0.0#Initalising the variable
-    spy_age=0#Initalising the variable
-    if spy_name.isalpha():#Checking for name entered by the user as input
-        spy_salutation = raw_input('What should we call you(Mr. or Ms.)')  # Message for the user and input from the user
-        if len(spy_name)>=2 :#Checking the length of the name which should be greater than two
-            if spy_salutation.upper()=='MR.' or spy_salutation.upper()=='MS.':#conditional Statement
-                spy_name = spy_salutation.upper() + '' + spy_name.upper()#Concatinationg  2 string
-                print 'Welcome '+spy_name +' Glad to have you back with us'##Concatinationg  2 string
-                print 'Alright '+spy_name+'. '+'I\'d like to know a little bit more about you ...'#Concatinationg  2 string
-                spy_age=input('what is your age ')#input taken from the user
-                if 50>spy_age>12:#conditional statement
-                    print 'You are eligible for being spy '+str(spy_age)#concationating th integer with the string
-                    spy_rating=input('Please enter your rating ')#input from the user
-                    if spy_rating>5.0:#Conditional statement
+    spy.rating=0.0#Initalising the variable
+    spy.age=0#Initalising the variable
+    if spy.name.isalpha():#Checking for name entered by the user as input
+        spy.salutation = raw_input('What should we call you(Mr. or Ms.)')  # Message for the user and input from the user
+        if len(spy.name)>=2 :#Checking the length of the name which should be greater than two
+            if spy.salutation.upper()=='MR.' or spy.salutation.upper()=='MS.':#conditional Statement
+                spy_name = spy.salutation.upper() + '' + spy.name.upper()#Concatinationg  2 string
+                print 'Welcome '+spy.name +' Glad to have you back with us'##Concatinationg  2 string
+                print 'Alright '+spy.name+'. '+'I\'d like to know a little bit more about you ...'#Concatinationg  2 string
+                spy.age=input('what is your age ')#input taken from the user
+                if 50>spy.age>12:#conditional statement
+                    print 'You are eligible for being spy '+str(spy.age)#concationating th integer with the string
+                    spy.rating=input('Please enter your rating ')#input from the user
+                    if spy.rating>5.0:#Conditional statement
                         print'You are Expert in Spying.You have been assigned a task'#Message given to the user
-                    elif 3.5<spy_rating<=5.0:#Conditional statement
+                    elif 3.5<spy.rating<=5.0:#Conditional statement
                         print 'You are Goood in Spying. You will be assigned a task. Soon'#Message given to the user
-                    elif 2.5<spy_rating<=3.5:#Conditional statement
+                    elif 2.5<spy.rating<=3.5:#Conditional statement
                         print 'You are not a Spy But Still You are in Queue'#Message given to the user
                     else:#Conditional statement
                         print 'Who hired You? You are fired!!!'#Message given to the user
                     spy_is_online = True#Initialising the variable
-                    print 'Authentication Complete.Welcome ' +spy_name+ ' age: ' +str(spy_age)+' and rating is '+str(spy_rating) # Concatinating two integer with a string
-                    start_chat(spy_name, spy_age, spy_rating)#calling a  chat function
+                    print 'Authentication Complete.Welcome ' +spy.name+ ' age: ' +str(spy.age)+' and rating is '+str(spy.rating) # Concatinating two integer with a string
+                    start_chat(spy.name, spy.age, spy.rating)#calling a  chat function
 
                 else:#Conditional statement
                     print 'You should grow up till now!! Common man'#Message to the user
