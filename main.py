@@ -1,6 +1,7 @@
 from steganography.steganography import Steganography#importing Steganography module
 from datetime import datetime#importing date time
 from spy_details import spy ,Spy,ChatMessage #importing a file with specific variables
+import csv
 
 time=datetime.now() # current date and time
 print time#Display to the user
@@ -12,9 +13,24 @@ frnd2 = Spy('Rohan', 'Mr.', 25, 4.7)
 friends = [frnd1, frnd2]
 
 
+def load_frnd():
+    with open('friends.csv', 'rb') as friends_data:
+        reader = list(csv.reader(friends_data))
 
+        for row in reader[1:]:
+            spy=Spy(name=row[0],salutation=row[1],age=row[3],rating=row[2])
+            friends.append(spy)
 
+load_frnd()
 
+def load_chats():
+    with open('chats.csv', 'rb') as friends_data:
+        reader = list(csv.reader(friends_data))
+
+        for row in reader[1:]:
+            l_chat=ChatMessage(message=row[0],sent_by_me=row[1],receiver_name=row[2])
+            Spy.chats.append(l_chat)
+load_chats()
 
 def add_status(c_status):#function for statud
     if c_status != None:#checking condition if status is not none
@@ -38,11 +54,18 @@ def add_status(c_status):#function for statud
 
 def add_friend():
     frnd = Spy('', '', 0, 0.0)
-    frnd.name=raw_input('What is your name ? ')#required an input
+    frnd.name=raw_input('What is your friend name ? ')#required an input
+    frnd.sal=raw_input('What should we call you Mr. or Ms.')
     frnd.age=input('What is your age ? ')#required an input
     frnd.rating=input('What is your rating ? ')#required an input
+    spy.is_online=True
     if len(frnd.name)>2 and 12<frnd.age<50 and frnd.rating>spy.rating and frnd.name.isalpha():#checking for the condition
-        friends.append(frnd)#appending in the list
+        frnd.name=frnd.name.upper()
+        frnd.sal=frnd.sal.upper()
+        with open('friends.csv', 'a') as friends_data:
+            writer = csv.writer(friends_data)
+            writer.writerow([frnd.name, frnd.sal, frnd.rating, frnd.age, spy.is_online])
+            print 'Your friend is added'
 
     else:
         print 'Friend cannot be added..'#displaying for the user
@@ -90,7 +113,7 @@ def read_message():#reading a message
 def start_chat(spy_name,spy_age,spy_rating):#user define function created
     print 'Here are your options ' +spy.name#Message given to the user
     current_status = None
-    show_menu = True#by default value true for validation
+    show_menu = True#user default value true for validation
     while show_menu:#using loop for multiple times show the same thing
         choice = input('What do you want to do ?\n1.Add a status\n2.Add a friend\n3.Send a message\n4.Read a message\n5.Read chats from user\n0.Exit ')#choices given to the userinput from the user
         if choice ==1:#conditional Statement
@@ -124,7 +147,7 @@ elif spy_exist.upper()=='N':#conditional Statement
         spy.salutation = raw_input('What should we call you(Mr. or Ms.)')  # Message for the user and input from the user
         if len(spy.name)>=2 :#Checking the length of the name which should be greater than two
             if spy.salutation.upper()=='MR.' or spy.salutation.upper()=='MS.':#conditional Statement
-                spy_name = spy.salutation.upper() + '' + spy.name.upper()#Concatinationg  2 string
+                spy.name = spy.salutation.upper() + '' + spy.name.upper()#Concatinationg  2 string
                 print 'Welcome '+spy.name +' Glad to have you back with us'##Concatinationg  2 string
                 print 'Alright '+spy.name+'. '+'I\'d like to know a little bit more about you ...'#Concatinationg  2 string
                 spy.age=input('what is your age ')#input taken from the user
