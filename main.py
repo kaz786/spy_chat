@@ -2,7 +2,7 @@ from steganography.steganography import Steganography#importing Steganography mo
 from datetime import datetime#importing date time
 from spy_details import spy ,Spy,ChatMessage #importing a file with specific variables
 import csv
-
+from colorama import Fore,Style
 time=datetime.now() # current date and time
 print time#Display to the user
 print 'Hello' #greetings given to the user
@@ -14,6 +14,7 @@ friends = [frnd1, frnd2]
 
 
 def load_frnd():
+
     with open('friends.csv', 'rb') as friends_data:
         reader = list(csv.reader(friends_data))
 
@@ -24,13 +25,26 @@ def load_frnd():
 load_frnd()
 
 def load_chats():
-    with open('chats.csv', 'rb') as friends_data:
-        reader = list(csv.reader(friends_data))
+    specific_name = raw_input('Enter the Freind name')
+    specific_sal=raw_input('What will you call Mr. or Ms.')
+    specific_name=specific_sal.upper()+specific_name.upper()
+    with open('chats.csv') as chats_data:
+        reader = list(csv.reader(chats_data))
+        print 'Secret Text ' + 'Date & Time in format  Date/Month/Hour ' + 'Sender Name ' + 'Receiver Name'
 
-        for row in reader[1:]:
-            l_chat=ChatMessage(message=row[0],sent_by_me=row[1],receiver_name=row[2])
-            Spy.chats.append(l_chat)
-load_chats()
+        for message,date,sent_by_me,receiver_name in reader[1:]:# The csv module already extracts the information for you
+
+            if specific_name==receiver_name:
+
+               print Fore.BLACK+message, Fore.BLUE+date, Fore.BLACK+sent_by_me, Fore.RED+receiver_name
+        print(Style.RESET_ALL)
+
+        if specific_name!=receiver_name:
+            print 'You have not chated with that friend'
+
+
+
+
 
 def add_status(c_status):#function for statud
     if c_status != None:#checking condition if status is not none
@@ -81,6 +95,7 @@ def select_frnd():#display all friend
     return user_selected_frnd_index#returning value to the function
 
 
+
 def send_message():#sending a message
     select_friend=select_frnd()#index value
     original_image = raw_input('What is the name of your image ? ')  # asking the user for an input of image
@@ -89,9 +104,14 @@ def send_message():#sending a message
     secret_text=str(select_friend)+secret_text#assigning the index with the text fro a reading a message validation
     Steganography.encode(original_image, output_path, secret_text)  # encoding the message with image
     print 'Your message has been successfully encoded..'#displaying for the user
-    new_chat = ChatMessage(secret_text, True)
-    friends[select_friend].chats.append(new_chat)  # appending the friend chat detail
+    a = int(secret_text[:1])
+    secret_text = secret_text.replace(str(a), '')
     print'Your secret message is ready.'#displaying for the user
+    with open('chats.csv', 'a') as chats_data:
+        writer = csv.writer(chats_data)
+
+        writer.writerow([secret_text,time.strftime("%d %m %H"),spy.name,friends[select_friend].name])
+
 
 def read_message():#reading a message
     select_friend=select_frnd()#index value
@@ -111,7 +131,7 @@ def read_message():#reading a message
 
 
 def start_chat(spy_name,spy_age,spy_rating):#user define function created
-    print 'Here are your options ' +spy.name#Message given to the user
+    print 'Here are your options ' +spy_name#Message given to the user
     current_status = None
     show_menu = True#user default value true for validation
     while show_menu:#using loop for multiple times show the same thing
@@ -127,7 +147,8 @@ def start_chat(spy_name,spy_age,spy_rating):#user define function created
         elif choice == 4:
             read_message()#calling read function for decoding
         elif choice == 5:
-            print 'this module is in progress'#working on this module
+            load_chats()
+
         elif choice==0:#conditional Statement
             show_menu=False#Terminating the program
         else:#conditional Statement
