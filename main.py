@@ -24,7 +24,12 @@ def load_frnd():
 
 load_frnd()
 
-def load_chats():
+
+
+
+
+
+def specific_chats():
     specific_name = raw_input('Enter the Freind name')
     specific_sal=raw_input('What will you call Mr. or Ms.')
     specific_name=specific_sal.upper()+specific_name.upper()
@@ -42,7 +47,12 @@ def load_chats():
         if specific_name!=receiver_name:
             print 'You have not chated with that friend'
 
-
+def load_chats():
+    with open('chats.csv') as chats_data:
+        reader = list(csv.reader(chats_data))
+        print 'Secret Text ' + 'Date & Time in format  Date/Month/Hour ' + 'Sender Name ' + 'Receiver Name'
+        for message, date, sent_by_me, receiver_name in reader[1:]:
+            print message,date,sent_by_me,receiver_name
 
 
 
@@ -96,6 +106,7 @@ def select_frnd():#display all friend
 
 
 
+
 def send_message():#sending a message
     select_friend=select_frnd()#index value
     original_image = raw_input('What is the name of your image ? ')  # asking the user for an input of image
@@ -117,11 +128,15 @@ def read_message():#reading a message
     select_friend=select_frnd()#index value
     output_path = raw_input('Which image you want to decode ? ')# asking the user for an input of image
     secret_text = Steganography.decode(output_path)#decoding message
-    a=int(secret_text[:1])#checking if the right person is decoding the message or not
-    if a==select_friend:
-        secret_text=secret_text.replace(str(a),'')
-        print 'Secret text is:' + secret_text#Displaying for the user
-        new_chat = ChatMessage(secret_text, False)
+    decode=int(secret_text[:1])#checking if the right person is decoding the message or not
+    if decode==select_friend:
+        secret_text=secret_text.replace(str(decode),'')
+
+
+        print 'Secret text is:' + secret_text  # Displaying for the user
+
+
+        new_chat = ChatMessage(secret_text,time.strftime("%d %m %H"),spy.name, friends[select_friend].name)
         friends[select_friend].chats.append(new_chat)  # appending the friend chat detail
         print'Your secret message has been saved...'#Displaying for the user
     else:
@@ -147,7 +162,14 @@ def start_chat(spy_name,spy_age,spy_rating):#user define function created
         elif choice == 4:
             read_message()#calling read function for decoding
         elif choice == 5:
-            load_chats()
+            chats=raw_input('load chat for all user press Y or for specific user press N')
+            if chats.upper()=='Y':
+                load_chats()
+            elif chats.upper()=='N':
+                specific_chats()
+            else:
+                print 'Please select the right option'
+
 
         elif choice==0:#conditional Statement
             show_menu=False#Terminating the program
