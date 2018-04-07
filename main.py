@@ -1,58 +1,57 @@
 from steganography.steganography import Steganography#importing Steganography module
 from datetime import datetime#importing date time
 from spy_details import spy ,Spy,ChatMessage #importing a file with specific variables
-import csv
-from colorama import Fore,Style
+import csv#importing csv file
+from colorama import Fore,Style#importing the color module
 time=datetime.now() # current date and time
 print time#Display to the user
 print 'Hello' #greetings given to the user
 print 'Let\'s get started' #initialising
 STATUS_MESSAGE=['At Movie', 'Available', 'Do not disturb']#predefined status
 frnd1 = Spy('Kazz', 'Mr.', 21, 4.0)  # object of made of the class
-frnd2 = Spy('Rohan', 'Mr.', 25, 4.7)
-friends = [frnd1, frnd2]
+frnd2 = Spy('Rohan', 'Mr.', 25, 4.7)#object amde of the class
+friends = [frnd1, frnd2]#appending it tot the list
 
 
-def load_frnd():
+def load_frnd():#for loading all the friend
 
-    with open('friends.csv', 'rb') as friends_data:
-        reader = list(csv.reader(friends_data))
+    with open('friends.csv', 'rb') as friends_data:#opening chats.csv file
+        reader = list(csv.reader(friends_data))#making this as a list
 
-        for row in reader[1:]:
-            spy=Spy(name=row[0],salutation=row[1],age=row[3],rating=row[2])
-            friends.append(spy)
+        for row in reader[1:]:#Excepting the first value display all by use concept of slicing
+            spy=Spy(name=row[0],salutation=row[1],age=row[3],rating=row[2])#object made of the classs
+            friends.append(spy)#appending it to the list
 
-load_frnd()
-
-
-
+load_frnd()#calling it to load by default all friend
 
 
 
-def specific_chats():
-    specific_name = raw_input('Enter the Freind name')
-    specific_sal=raw_input('What will you call Mr. or Ms.')
-    specific_name=specific_sal.upper()+specific_name.upper()
-    with open('chats.csv') as chats_data:
-        reader = list(csv.reader(chats_data))
-        print 'Secret Text ' + 'Date & Time in format  Date/Month/Hour ' + 'Sender Name ' + 'Receiver Name'
+
+
+
+def specific_chats():#for particular friend
+    specific_name = raw_input('Enter the Freind name')#asking for the user input name
+    specific_sal=raw_input('What will you call Mr. or Ms.')#asking for the user input salutation
+    specific_name=specific_sal.upper()+specific_name.upper()#converting for uppercase
+    with open('chats.csv') as chats_data:#opening chats.csv file
+        reader = list(csv.reader(chats_data))#making this as a list
+        print 'Secret Text ' + 'Date & Time in format  Date/Month/Hour ' + 'Sender Name ' + 'Receiver Name'#Displaying the message for the user
 
         for message,date,sent_by_me,receiver_name in reader[1:]:# The csv module already extracts the information for you
 
-            if specific_name==receiver_name:
+            if specific_name==receiver_name:#conditional statement
 
-               print Fore.BLACK+message, Fore.BLUE+date, Fore.BLACK+sent_by_me, Fore.RED+receiver_name
-        print(Style.RESET_ALL)
+               print Fore.BLACK+message, Fore.BLUE+date, Fore.BLACK+sent_by_me, Fore.RED+receiver_name#formaating it with a color
+        print(Style.RESET_ALL)#changes made by default
+        if specific_name!=receiver_name:#conditional statemetn
+            print 'You have not chated with that friend'#displaying it for the user
 
-        if specific_name!=receiver_name:
-            print 'You have not chated with that friend'
-
-def load_chats():
-    with open('chats.csv') as chats_data:
-        reader = list(csv.reader(chats_data))
-        print 'Secret Text ' + 'Date & Time in format  Date/Month/Hour ' + 'Sender Name ' + 'Receiver Name'
-        for message, date, sent_by_me, receiver_name in reader[1:]:
-            print message,date,sent_by_me,receiver_name
+def load_chats():#for loading all the chats
+    with open('chats.csv') as chats_data:#opening chats.csv file
+        reader = list(csv.reader(chats_data))#making this as a list
+        print 'Secret Text ' + 'Date & Time in format  Date/Month/Hour ' + 'Sender Name ' + 'Receiver Name'#Displaying it to the user
+        for message, date, sent_by_me, receiver_name in reader[1:]:#Extracting specific information
+            print message,date,sent_by_me,receiver_name#printing it for the user
 
 
 
@@ -131,10 +130,15 @@ def read_message():#reading a message
     decode=int(secret_text[:1])#checking if the right person is decoding the message or not
     if decode==select_friend:
         secret_text=secret_text.replace(str(decode),'')
+        predefined='SOS' or 'sos' or 'SAVE ME'or 'save me' or 'Emergency' or 'EMERGENCY' or 'emergency'
+        split=secret_text.split()
+        if predefined in split:
+            print'Secret text is:'+ Fore.RED+secret_text  # Displaying for the user
 
+        else:
 
-        print 'Secret text is:' + secret_text  # Displaying for the user
-
+            print Fore.BLACK+'Secret text is:' +Fore.RED+ secret_text  # Displaying for the user
+        print(Style.RESET_ALL)
 
         new_chat = ChatMessage(secret_text,time.strftime("%d %m %H"),spy.name, friends[select_friend].name)
         friends[select_friend].chats.append(new_chat)  # appending the friend chat detail
