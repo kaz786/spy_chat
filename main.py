@@ -41,7 +41,7 @@ def specific_chats():#for particular friend
 
             if specific_name==receiver_name:#conditional statement
 
-               print Fore.BLACK+message, Fore.BLUE+date, Fore.BLACK+sent_by_me, Fore.RED+receiver_name#formaating it with a color
+               print Fore.BLACK+message,Fore.BLUE+date,Fore.BLACK+sent_by_me,Fore.RED+receiver_name#formaating it with a color
         print(Style.RESET_ALL)#changes made by default
         if specific_name!=receiver_name:#conditional statemetn
             print 'You have not chated with that friend'#displaying it for the user
@@ -130,15 +130,15 @@ def read_message():#reading a message
     decode=int(secret_text[:1])#checking if the right person is decoding the message or not
     if decode==select_friend:
         secret_text=secret_text.replace(str(decode),'')
-        predefined='SOS' or 'sos' or 'SAVE ME'or 'save me' or 'Emergency' or 'EMERGENCY' or 'emergency'
-        split=secret_text.split()
-        if predefined in split:
-            print'Secret text is:'+ Fore.RED+secret_text  # Displaying for the user
+        predefined=['SOS','SAVE ME','EMERGENCY']
 
+        if secret_text.upper() in predefined:
+            print'WE NEED YOU:'+ Fore.RED+secret_text  # Displaying for the user
+            print(Style.RESET_ALL)
         else:
 
-            print Fore.BLACK+'Secret text is:' +Fore.RED+ secret_text  # Displaying for the user
-        print(Style.RESET_ALL)
+            print 'Secret text is:' + secret_text  # Displaying for the user
+
 
         new_chat = ChatMessage(secret_text,time.strftime("%d %m %H"),spy.name, friends[select_friend].name)
         friends[select_friend].chats.append(new_chat)  # appending the friend chat detail
